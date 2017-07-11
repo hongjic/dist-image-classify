@@ -11,6 +11,13 @@ import PuzzleSet
 import vgg19
 
 
+# TODO:
+# 1) persist the model using SavedModel during training
+# 2) use QueueRunner and FileReader to asynchronously load samples
+# 3) gpu suport on RHEL
+# 4) run on TFoS
+
+
 flags = tf.app.flags
 flags.DEFINE_string("data_dir", "./puzzle-training-set-Q2",
                     "Directory for storing mnist data")
