@@ -14,7 +14,7 @@ import vgg19
 # TODO:
 # 1) persist the model using SavedModel during training
 # 2) use QueueRunner and FileReader to asynchronously load samples
-# 3) gpu suport on RHEL
+# 3) GPU suport on RHEL, VRAM specification
 # 4) run on TFoS
 
 
@@ -41,7 +41,8 @@ flags.DEFINE_boolean(
     "existing_servers", False, "Whether servers already exists. If True, "
     "will use the worker hosts via their GRPC URLs (one client process "
     "per worker host). Otherwise, will create an in-process TensorFlow "
-    "server.")
+    "server."
+)
 flags.DEFINE_string("ps_hosts","localhost:2222",
                     "Comma-separated list of hostname:port pairs")
 flags.DEFINE_string("worker_hosts", "localhost:2223,localhost:2224",
@@ -210,7 +211,7 @@ def main(unused_argv):
 
         # Validation feed
         val_images, val_labels = puzzleset.validation_batch()
-        val_feed = {x: val_images, y_: val_labels}
+        val_feed = {vgg.images: val_images, vgg.labels: val_labels, train_mode: False}
         val_xent = sess.run(cross_entropy, feed_dict=val_feed)
         print("After %d training step(s), validation cross entropy = %g" % (FLAGS.train_steps, val_xent))
 

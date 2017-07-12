@@ -1,0 +1,25 @@
+1) Device placement:
+
+  a Variable can be pinned to a particular device when it is created, using a "with tf. device(...):" block.
+  Device placement is particularly important when running in a replicated setting. See "tf.train.replica_device_setter"
+for details of a device function that can simplify the configuration for devices for a replicated model.
+
+2) Saving and Restoring:
+  The easiest way is to use "tf.train.Saver". Note that to restore a model without a graph one must first initialize the model
+from the meta file, typically ".meta" file. This is done with "tf.train.import_meta_graph", which in turn returns a "Saver" from 
+which one can than perform a "restore".
+  The checkpoint file is a map from variable names to values. By default, it uses the value of the "tf.Variable.name" property for 
+each variable.
+  
+  # add ops to a save and resotre only "v2" using name "my_v2"
+  v2 = tf.Variable(..., name="v1")
+  saver = tf.train.Saver({"my_v2": v2})
+
+3) checkpoint directory structure
+  checkpoint file: it is a file to record all the meta information for the models persisted in this directory
+  model.ckpt.meta: it is expressed as a MetaGraphDef protocol buffer. It contains information as
+    a) MetaInfoDef: for meta information, such as version and other information
+    b) GraphDef: for describing the graph
+    c) SaverDer: for the saver
+    d) CollectionDef: map that further describes additional components of the model, such as "Variables", "tf.train.QueueRunner", etc.
+  model.ckpt: it is the file persisting the value for each variable in a key-value way.
